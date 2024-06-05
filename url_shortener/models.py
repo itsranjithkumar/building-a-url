@@ -2,7 +2,7 @@ import string
 
 from.extensions import db
 
-from datatime import datetime # type: ignore
+from datetime import datetime # type: ignore
 from random import choices
 
 class Link(db.Model):
@@ -14,7 +14,7 @@ class Link(db.Model):
 
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
-        self.short_url = 'something'
+        self.short_url = self.generate_short_link()
 
     def generate_short_link(self):
         characters = string.digits + string.ascii_letters

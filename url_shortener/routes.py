@@ -1,7 +1,7 @@
-from urllib import request
-from flask import Blueprint,render_template
+from flask import Blueprint,render_template,redirect,request
 
 from .extensions import db
+from .models import Link
 
 from url_shortener.models import Link
 
@@ -9,7 +9,11 @@ short = Blueprint('short', __name__)
 
 @short.route('/<short_url>')
 def redirect_to_url(short_url):
-    return "hbjn"
+    link = Link.query.filter_by(short_url=short_url).first_or_404()
+
+    link.visits = link.visits + 1
+    db.session.commits()
+    return redirect(link.original_url)
 
 @short.route('/')
 def index():
@@ -26,8 +30,10 @@ def add_link():
 
 @short.route('/stats')
 def stats():
-    pass
+    links = Link.query.all()
+
+    return render_template('stats.html',links=links)
 
 @short.errorhandler(404)
 def page_not_found(e):
-    return '', 404
+    return '<h1>404<h1>', 404
